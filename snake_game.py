@@ -112,7 +112,6 @@ class App():
 
 	def game(self):
 		pygame.display.set_caption('SNAKE (GAME)')
-		game_on = True
 		snake_block = 10
 		snake_speed = 15
 	 
@@ -125,6 +124,7 @@ class App():
 		snake_list = []
 		score = 1
 
+		game_on = True
 		while game_on:
 			self.draw_game_hud(score)
 
