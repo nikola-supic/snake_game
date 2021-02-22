@@ -114,7 +114,7 @@ class App():
 
 	def game(self):
 		pygame.display.set_caption('SNAKE (GAME)')
-		snake_block = 12
+		snake_block = 13
 		snake_speed = 15
 	 
 		x1 = round((self.width / 2) // snake_block) * snake_block
@@ -138,16 +138,16 @@ class App():
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_ESCAPE:
 						game_on = False
-					if event.key == pygame.K_LEFT:
+					if event.key == pygame.K_LEFT and x1_change != snake_block:
 						x1_change = -snake_block
 						y1_change = 0
-					elif event.key == pygame.K_RIGHT:
+					elif event.key == pygame.K_RIGHT and x1_change != -snake_block:
 						x1_change = snake_block
 						y1_change = 0
-					elif event.key == pygame.K_UP:
+					elif event.key == pygame.K_UP and y1_change != snake_block:
 						y1_change = -snake_block
 						x1_change = 0
-					elif event.key == pygame.K_DOWN:
+					elif event.key == pygame.K_DOWN and y1_change != -snake_block:
 						y1_change = snake_block
 						x1_change = 0
 
@@ -172,11 +172,18 @@ class App():
 					self.finish_screen(score)
 
 			# Draw snake
-			for x in snake_list:
-				pygame.draw.rect(self.screen, BLACK, (x[0], x[1], snake_block, snake_block))
+			for idx, x in enumerate(snake_list):
+				if idx == len(snake_list) - 1:
+					head = pygame.draw.rect(self.screen, ORANGE, (x[0], x[1], snake_block, snake_block))
+				else:
+					pygame.draw.rect(self.screen, BLACK, (x[0], x[1], snake_block, snake_block))
 
 			# Food drawing and check
 			food_rect = pygame.draw.rect(self.screen, RED, [food_x, food_y, snake_block, snake_block])
+			food_img = pygame.image.load("images/apple.png")
+			picture = pygame.transform.scale(food_img, (20, 20))
+			self.screen.blit(picture, (food_x-5, food_y-5))
+
 			if food_rect.collidepoint((x1, y1)):
 				food_x, food_y = self.get_food_pos(snake_block)
 				score += 1
