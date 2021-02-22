@@ -1,0 +1,10 @@
+xxxdadadx, 100
+Petar, 50
+Jovan, 50
+xxxx, 25
+Nikola, 20
+XX, 6
+Marko, 5
+Jovica, 5
+Ni, 1
+Nikol, 1

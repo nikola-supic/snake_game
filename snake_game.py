@@ -12,6 +12,7 @@ Created on Sun Feb 21 19:25:30 2021
 import pygame
 import sys
 import random
+from text_input import InputBox
 main_clock = pygame.time.Clock()
 
 WHITE = (255, 255, 255)
@@ -47,15 +48,14 @@ class App():
 			self.screen.fill(BLACK)
 			bg = pygame.image.load("images/background.png")
 			self.screen.blit(bg, (0, 0))
-			mx, my = pygame.mouse.get_pos()
-
 			draw_text('MAIN MENU', self.font, WHITE, self.screen, (20, 20))
 			button_game = button(self.screen, 'GAME', self.font, (20, 140), (160, 40), YELLOW, BLACK, 3, ORANGE)
 			button_hs = button(self.screen, 'HIGH SCORES', self.font, (20, 200), (160, 40), YELLOW, BLACK, 3, ORANGE)
 			button_options = button(self.screen, 'OPTIONS', self.font, (20, 260), (160, 40), YELLOW, BLACK, 3, ORANGE)
 			button_exit = button(self.screen, 'EXIT', self.font, (20, 320), (160, 40), YELLOW, BLACK, 3, ORANGE)
 			draw_text('GAME DEVELOPED BY SULE', self.font, WHITE, self.screen, (20, self.height-20))
-
+			
+			mx, my = pygame.mouse.get_pos()
 			if button_game.collidepoint((mx, my)):
 				if click:
 					self.game()
@@ -91,12 +91,14 @@ class App():
 			pygame.display.update()
 			main_clock.tick(60)
 
-	def draw_game_hud(self, score):
-		self.screen.fill(BLACK)
-		bg = pygame.image.load("images/game_bg.png")
-		self.screen.blit(bg, (0, 0))
+	def draw_game_hud(self, score, bg_included = True):
+		if bg_included:
+			self.screen.fill(BLACK)
+			bg = pygame.image.load("images/game_bg.png")
+			self.screen.blit(bg, (0, 0))
+
 		draw_text('GAME', self.font, WHITE, self.screen, (15, 20))
-		draw_text(f'SCORE: {score-1}', self.font, WHITE, self.screen, (15, 40))
+		draw_text(f'SCORE: {score}', self.font, WHITE, self.screen, (15, 40))
 		pygame.draw.line(self.screen, BLACK, (1, 1), (self.width, 1), 4) # up
 		pygame.draw.line(self.screen, BLACK, (0, self.height-3), (self.width, self.height-3), 4) # down
 
@@ -106,7 +108,7 @@ class App():
 		pygame.draw.line(self.screen, BLACK, (0, 60), (self.width, 60), 4) # up2
 
 	def get_food_pos(self, size):
-		food_x = round(random.randrange(0, self.width - size) / 10.0) * 10.0
+		food_x = round(random.randrange(10, self.width - size) / 10.0) * 10.0
 		food_y = round(random.randrange(70, self.height - size) / 10.0) * 10.0
 		return food_x, food_y
 
@@ -186,14 +188,18 @@ class App():
 		click = False
 		running = True
 		while running:
-			self.draw_game_hud(score)
+			self.screen.fill(BLACK)
+			bg = pygame.image.load("images/finish_bg.jpg")
+			self.screen.blit(bg, (0, 0))
+			self.draw_game_hud(score, False)
+
 			draw_text('GAME OVER', self.font_big, WHITE, self.screen, (self.width / 2, 32), True)
 			button_restart = button(self.screen, 'RESTART', self.font, (15, 120), (180, 40), GREEN, WHITE, 3, BLACK)
 			button_save = button(self.screen, 'SAVE HIGH SCORE', self.font, (15, 180), (180, 40), GREEN, WHITE, 3, BLACK)
 			button_hs = button(self.screen, 'HIGH SCORE', self.font, (15, 240), (180, 40), GREEN, WHITE, 3, BLACK)
 			button_options = button(self.screen, 'OPTIONS', self.font, (15, 300), (180, 40), GREEN, WHITE, 3, BLACK)
 			button_exit = button(self.screen, 'EXIT', self.font, (15, 360), (180, 40), GREEN, WHITE, 3, BLACK)
-
+			
 			mx, my = pygame.mouse.get_pos()
 			if button_restart.collidepoint((mx, my)):
 				if click:
@@ -201,7 +207,7 @@ class App():
 
 			if button_save.collidepoint((mx, my)):
 				if click:
-					self.save_hs()
+					self.save_hs(score)
 
 			if button_hs.collidepoint((mx, my)):
 				if click:
@@ -234,15 +240,34 @@ class App():
 			pygame.display.update()
 			main_clock.tick(60)
 
-	def save_hs(self):
+	def save_hs(self, score):
 		pygame.display.set_caption('SNAKE (SAVE HIGH SCORE)')
 		running = True
+		input_name = InputBox(280, 200, 320, 40, '', BLACK, WHITE)
+		click = False
 		while running:
 			self.screen.fill(BLACK)
-			bg = pygame.image.load("images/background.png")
+			bg = pygame.image.load("images/finish_bg.jpg")
 			self.screen.blit(bg, (0, 0))
-			draw_text('SAVE HIGH SCORE', self.font, WHITE, self.screen, (20, 20))
+			self.draw_game_hud(score, False)
 
+			draw_text('SAVE HIGH SCORE', self.font_big, WHITE, self.screen, (self.width / 2, 32), True)
+			draw_text(f'Your score is: {score}', self.font, WHITE, self.screen, (self.width / 2, 120), True)
+			draw_text('Are you sure you want to save it?', self.font, WHITE, self.screen, (self.width / 2, 140), True)
+			draw_text('Please enter your name below', self.font, WHITE, self.screen, (self.width / 2, 160), True)
+			draw_text('If you dont want to save your score, press ESC', self.font, WHITE, self.screen, (self.width / 2, 180), True)
+			button_save = button(self.screen, 'SAVE SCORE', self.font, (280, 380), (320, 40), GREEN, WHITE, 3, BLACK)
+			input_name.draw(self.screen)
+			
+			mx, my = pygame.mouse.get_pos()
+			if button_save.collidepoint((mx, my)):
+				if click:
+					input_name.text.replace(',', '.')
+					save_hs(input_name.text, score)
+					input_name.text = ''
+					running = False
+
+			click = False
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					pygame.quit()
@@ -252,17 +277,31 @@ class App():
 					if event.key == pygame.K_ESCAPE:
 						running = False
 
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					if event.button == 1:
+						click = True
+
+				input_name.handle_event(event)
+			input_name.update()
+
 			pygame.display.update()
 			main_clock.tick(60)
+
 
 	def high_scores(self):
 		pygame.display.set_caption('SNAKE (HIGH SCORES)')
 		running = True
 		while running:
 			self.screen.fill(BLACK)
-			bg = pygame.image.load("images/background.png")
+			bg = pygame.image.load("images/finish_bg.jpg")
 			self.screen.blit(bg, (0, 0))
 			draw_text('HIGH SCORES', self.font, WHITE, self.screen, (20, 20))
+
+			tmp_y = 60
+			recorders = load_hs_file(20)
+			for count, recorder in enumerate(recorders, 1):
+				draw_text(f'{count}. {recorder} // {recorders[recorder]}', self.font, BLACK, self.screen, (20, tmp_y))
+				tmp_y += 20
 
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -308,6 +347,7 @@ def draw_text(text, font, color, surface, pos, center=False, big=False):
 		text_rect = text.get_rect(midleft=(x, y))
 	surface.blit(text, text_rect)
 
+
 def button(surface, text, font, pos, size, bg_color, text_color, border, border_color):
 	x, y = pos
 	width, height = size
@@ -320,5 +360,37 @@ def button(surface, text, font, pos, size, bg_color, text_color, border, border_
 	draw_text(text, font, text_color, surface, (x + width/2, y + height/2), True)
 	return btn
 
+def save_hs(name, score):
+	recorders = {}
+	# Load old recorders from file
+	with open('highscores.txt') as file:
+		for line in file.readlines():
+			line = line.strip()
+			line = line.split(',')
+			recorders[line[0]] = int(line[-1])
+	# Add new recorder to dictionary
+	recorders[name] = score
+
+	# Sort them and save them to file
+	with open('highscores.txt', 'w') as file:
+		for item in sorted(recorders, key=recorders.get, reverse=True):
+			file.write(f'{item}, {recorders[item]}\n')
+
+def load_hs_file(max = 10):
+	recorders = {}
+	count = 0
+	with open('highscores.txt') as file:
+		for line in file.readlines():
+			line = line.strip()
+			line = line.split(',')
+			recorders[line[0]] = int(line[-1])
+			count += 1
+
+			if count == max:
+				break
+	return recorders
+
+
 if __name__ == '__main__':
+	# load_hs_file(5)
 	app = App(870, 480)
