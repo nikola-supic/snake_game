@@ -108,17 +108,17 @@ class App():
 		pygame.draw.line(self.screen, BLACK, (0, 60), (self.width, 60), 4) # up2
 
 	def get_food_pos(self, size):
-		food_x = round(random.randrange(10, self.width - size) / 10.0) * 10.0
-		food_y = round(random.randrange(70, self.height - size) / 10.0) * 10.0
+		food_x = round(random.randrange(10, self.width - size) // float(size)) * float(size)
+		food_y = round(random.randrange(70, self.height - size) // float(size)) * float(size)
 		return food_x, food_y
 
 	def game(self):
 		pygame.display.set_caption('SNAKE (GAME)')
-		snake_block = 10
+		snake_block = 12
 		snake_speed = 15
 	 
-		x1 = round((self.width / 2) // 10) * 10
-		y1 = round((self.height / 2) // 10) * 10
+		x1 = round((self.width / 2) // snake_block) * snake_block
+		y1 = round((self.height / 2) // snake_block) * snake_block
 		food_x, food_y = self.get_food_pos(snake_block)
 	 
 		x1_change = 0
