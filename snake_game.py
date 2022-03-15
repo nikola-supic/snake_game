@@ -56,37 +56,33 @@ class App():
 			draw_text('GAME DEVELOPED BY SULE', self.font, WHITE, self.screen, (20, self.height-20))
 			
 			mx, my = pygame.mouse.get_pos()
-			if button_game.collidepoint((mx, my)):
-				if click:
+			if click:
+				if button_game.collidepoint((mx, my)):
 					self.game()
 
-			if button_hs.collidepoint((mx, my)):
-				if click:
+				elif button_hs.collidepoint((mx, my)):
 					self.high_scores()
 
-			if button_options.collidepoint((mx, my)):
-				if click:
+				elif button_options.collidepoint((mx, my)):
 					self.options()
 
-			if button_exit.collidepoint((mx, my)):
-				if click:
+				elif button_exit.collidepoint((mx, my)):
 					pygame.quit()
 					sys.exit()
 
 			click = False
 			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					pygame.quit()
-					sys.exit()
-
-				if event.type == pygame.KEYDOWN:
-					if event.key == pygame.K_ESCAPE:
+				match event.type:
+					case pygame.QUIT:
 						pygame.quit()
 						sys.exit()
-
-				if event.type == pygame.MOUSEBUTTONDOWN:
-					if event.button == 1:
-						click = True
+					case pygame.KEYDOWN:
+						if event.key == pygame.K_ESCAPE:
+							pygame.quit()
+							sys.exit()
+					case pygame.MOUSEBUTTONDOWN:
+						if event.button == 1:
+							click = True
 
 			pygame.display.update()
 			main_clock.tick(60)
@@ -131,25 +127,27 @@ class App():
 			self.draw_game_hud(score)
 
 			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					pygame.quit()
-					sys.exit()
+				match event.type:
+					case pygame.QUIT:
+						pygame.quit()
+						sys.exit()
 
-				if event.type == pygame.KEYDOWN:
-					if event.key == pygame.K_ESCAPE:
-						game_on = False
-					if event.key == pygame.K_LEFT and x1_change != snake_block:
-						x1_change = -snake_block
-						y1_change = 0
-					elif event.key == pygame.K_RIGHT and x1_change != -snake_block:
-						x1_change = snake_block
-						y1_change = 0
-					elif event.key == pygame.K_UP and y1_change != snake_block:
-						y1_change = -snake_block
-						x1_change = 0
-					elif event.key == pygame.K_DOWN and y1_change != -snake_block:
-						y1_change = snake_block
-						x1_change = 0
+					case pygame.KEYDOWN:
+						match event.key:
+							case pygame.K_ESCAPE:
+								game_on = False
+							case pygame.K_LEFT if x1_change != snake_block:
+								x1_change = -snake_block
+								y1_change = 0
+							case pygame.K_RIGHT if x1_change != -snake_block:
+								x1_change = snake_block
+								y1_change = 0
+							case pygame.K_UP if y1_change != snake_block:
+								y1_change = -snake_block
+								x1_change = 0
+							case pygame.K_DOWN if y1_change != -snake_block:
+								y1_change = snake_block
+								x1_change = 0
 
 			# Check if snake went out of screen
 			if x1 >= self.width or x1 < 0 or y1 >= self.height or y1 < 65:
@@ -208,41 +206,36 @@ class App():
 			button_exit = button(self.screen, 'EXIT', self.font, (15, 360), (180, 40), GREEN, WHITE, 3, BLACK)
 			
 			mx, my = pygame.mouse.get_pos()
-			if button_restart.collidepoint((mx, my)):
-				if click:
+			if click:
+				if button_restart.collidepoint((mx, my)):
 					self.game()
 
-			if button_save.collidepoint((mx, my)):
-				if click:
+				if button_save.collidepoint((mx, my)):
 					self.save_hs(score)
 
-			if button_hs.collidepoint((mx, my)):
-				if click:
+				if button_hs.collidepoint((mx, my)):
 					self.high_scores()
 
-			if button_options.collidepoint((mx, my)):
-				if click:
+				if button_options.collidepoint((mx, my)):
 					self.options()
 
-			if button_exit.collidepoint((mx, my)):
-				if click:
+				if button_exit.collidepoint((mx, my)):
 					pygame.quit()
 					sys.exit()
 
 			click = False
 			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					pygame.quit()
-					sys.exit()
-
-				if event.type == pygame.KEYDOWN:
-					if event.key == pygame.K_ESCAPE:
-						self.main_menu()
-						running = False
-
-				if event.type == pygame.MOUSEBUTTONDOWN:
-					if event.button == 1:
-						click = True
+				match event.type:
+					case pygame.QUIT:
+						pygame.quit()
+						sys.exit()
+					case pygame.KEYDOWN:
+						if event.key == pygame.K_ESCAPE:
+							self.main_menu()
+							running = False
+					case pygame.MOUSEBUTTONDOWN:
+						if event.button == 1:
+							click = True
 
 			pygame.display.update()
 			main_clock.tick(60)
@@ -276,17 +269,16 @@ class App():
 
 			click = False
 			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					pygame.quit()
-					sys.exit()
-
-				if event.type == pygame.KEYDOWN:
-					if event.key == pygame.K_ESCAPE:
-						running = False
-
-				if event.type == pygame.MOUSEBUTTONDOWN:
-					if event.button == 1:
-						click = True
+				match event.type:
+					case pygame.QUIT:
+						pygame.quit()
+						sys.exit()
+					case pygame.KEYDOWN:
+						if event.key == pygame.K_ESCAPE:
+							running = False
+					case pygame.MOUSEBUTTONDOWN:
+						if event.button == 1:
+							click = True
 
 				input_name.handle_event(event)
 			input_name.update()
@@ -311,13 +303,13 @@ class App():
 				tmp_y += 20
 
 			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					pygame.quit()
-					sys.exit()
-
-				if event.type == pygame.KEYDOWN:
-					if event.key == pygame.K_ESCAPE:
-						running = False
+				match event.type:
+					case pygame.QUIT:
+						pygame.quit()
+						sys.exit()
+					case pygame.KEYDOWN:
+						if event.key == pygame.K_ESCAPE:
+							running = False
 
 			pygame.display.update()
 			main_clock.tick(60)
@@ -333,13 +325,13 @@ class App():
 			draw_text('OPTIONS', self.font, WHITE, self.screen, (20, 20))
 
 			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					pygame.quit()
-					sys.exit()
-
-				if event.type == pygame.KEYDOWN:
-					if event.key == pygame.K_ESCAPE:
-						running = False
+				match event.type:
+					case pygame.QUIT:
+						pygame.quit()
+						sys.exit()
+					case pygame.KEYDOWN:
+						if event.key == pygame.K_ESCAPE:
+							running = False
 
 			pygame.display.update()
 			main_clock.tick(60)
@@ -399,5 +391,4 @@ def load_hs_file(max = 10):
 
 
 if __name__ == '__main__':
-	# load_hs_file(5)
 	app = App(870, 480)
